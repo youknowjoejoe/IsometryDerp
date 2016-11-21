@@ -40,9 +40,12 @@ public class GraphicsPanel extends JPanel implements Runnable{
     	this.requestFocus();
         this.setPreferredSize(new Dimension(WIDTH,HEIGHT));
         
-        BufferedImage[] imgs = new BufferedImage[1];
+        BufferedImage[] imgs = new BufferedImage[4];
         try {
-        	imgs[0] = ImageIO.read(new File("stoneTile2.png"));
+        	imgs[0] = ImageIO.read(getClass().getResource("/resources/stoneTile.png"));
+        	imgs[1] = ImageIO.read(getClass().getResource("/resources/stoneWall.png"));
+        	imgs[2] = ImageIO.read(getClass().getResource("/resources/grassTile.png"));
+        	imgs[3] = ImageIO.read(getClass().getResource("/resources/treeTile.png"));
         } catch (IOException e){
         	e.printStackTrace();
         }
@@ -50,8 +53,18 @@ public class GraphicsPanel extends JPanel implements Runnable{
         Player p = new Player(new Vec2(0,0));
         this.addKeyListener(p);
         int[][] tiles = new int[30][30];
-        Tile[] tileIDs = {new Tile(imgs[0])};
+        for(int rep = 0; rep < tiles.length * tiles[0].length; rep++){
+        	tiles[rep/tiles.length][rep%tiles.length] = 2;
+        }
+        for(int rep = 0; rep < 30; rep++){
+            tiles[rep][rep] = 1;
+        }
+        for(int rep = 30-1; rep >= 0; rep--){
+            tiles[rep][29-rep] = 1;
+        }
+        Tile[] tileIDs = {new Tile(imgs[0]),new Tile(imgs[1]), new Tile(imgs[2]), new Tile(imgs[3])};
         currentScene = new Scene(tiles, 28, 16, tileIDs,p,WIDTH,HEIGHT);
+        this.addMouseListener(currentScene);
         this.addMouseMotionListener(currentScene);
     }
     
@@ -82,7 +95,7 @@ public class GraphicsPanel extends JPanel implements Runnable{
     }
     
     public void updateInput(){
-    	
+    	this.requestFocus();
     }
     
     public void logic(float dt){
@@ -119,7 +132,7 @@ public class GraphicsPanel extends JPanel implements Runnable{
     }
     
     public static void main(String[] args){
-        JFrame window = new JFrame("Isometric Test");
+        JFrame window = new JFrame("Isometric Editor");
         GraphicsPanel pane = new GraphicsPanel(1.0f/60.0f,0.4f);
         window.add(pane);
         window.setResizable(false);
