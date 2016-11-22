@@ -81,21 +81,22 @@ public class GraphicsPanel extends JPanel implements Runnable{
     public void cycle(){
     	currentTime = System.nanoTime()/1000000000.0;
     	accumulatedTime += (currentTime-oldTime)*timeScale;
-    	
-    	this.updateInput();
-    	
-    	while(accumulatedTime > dt){
-    		this.logic(dt);
-    		accumulatedTime-=dt;
-    		timePassed+=dt;
+    	if(accumulatedTime > dt){
+    		while(accumulatedTime > dt){
+    			this.logic(dt);
+    			accumulatedTime-=dt;
+    			timePassed+=dt;
+    		}
+    		this.repaint();
+    	} else {
+    		try {
+				Thread.sleep((long) (1000*(dt-accumulatedTime)));
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
     	}
-        this.repaint();
         
         this.oldTime = currentTime;
-    }
-    
-    public void updateInput(){
-    	this.requestFocus();
     }
     
     public void logic(float dt){
@@ -133,7 +134,7 @@ public class GraphicsPanel extends JPanel implements Runnable{
     
     public static void main(String[] args){
         JFrame window = new JFrame("Isometric Editor");
-        GraphicsPanel pane = new GraphicsPanel(1.0f/60.0f,0.4f);
+        GraphicsPanel pane = new GraphicsPanel(1.0f/1000.0f,0.4f);
         window.add(pane);
         window.setResizable(false);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

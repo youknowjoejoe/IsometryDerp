@@ -39,27 +39,25 @@ public class Scene implements MouseMotionListener, MouseListener {
         g2d.translate(tx.x,tx.y);
         for(int x = 0; x < tiles.length; x++){
             for(int y = 0; y < tiles[0].length; y++){
-                Vec2 pos = new Vec2((x*width-y*width)/2,(x*height+y*height)/2);
+                Vec2 pos = this.cartesian(new Vec2I(x,y));
                 tileIDs[tiles[x][y]].draw(g2d, pos);
-                Vec2I tmp = mousePos.minus(tx).plus(new Vec2(0,0)).getVec2I();
-                if(Math.floor((tmp.x*height+tmp.y*width)/(width*height)) == x && Math.floor((tmp.y*width-tmp.x*height)/(width*height)) == y){
-                    g2d.setColor(Color.red);
-                    g2d.fillRect((x*width-y*width)/2-width/2,(x*height+y*height)/2-height/2, width, height);
+                Vec2I isoMousePos = isometric(mousePos.minus(tx).plus(new Vec2(0,0)));
+                if(isoMousePos.x == x && isoMousePos.y == y){
                     if(mouseDown){
-                        //tiles[x][y] = (-(tiles[x][y]*2-1)+1)/2;
-                        //System.out.println(tiles[x][y]);
                         tiles[x][y] ^= 1;
-                        //0,1
-                        //0,2
-                        //-1,1
-                        //1,-1
-                        //2,0
-                        //1,0
                         mouseDown = false;
                     }
                 }
             }
         }
+    }
+    
+    private Vec2 cartesian(Vec2I iso){
+    	return new Vec2((iso.x*width-iso.y*width)/2,(iso.x*height+iso.y*height)/2);
+    }
+    
+    private Vec2I isometric(Vec2 cart){
+    	return new Vec2I((int) (cart.x*height+cart.y*width)/(width*height),(int) (cart.y*width-cart.x*height)/(width*height));
     }
 
     @Override

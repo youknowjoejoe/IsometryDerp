@@ -9,7 +9,7 @@ public class Player implements KeyListener{
 	private boolean downDown;
 	private boolean rightDown;
 	private boolean leftDown;
-	private float speed = 400;
+	private float speed = 400.0f;
 	
 	public Player(Vec2 pos){
 		this.pos = pos;
